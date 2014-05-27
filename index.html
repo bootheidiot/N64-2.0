@@ -32,39 +32,216 @@
     <div id="main_content_wrap" class="outer">
       <section id="main_content" class="inner">
         <h3>
-<a name="welcome-to-github-pages" class="anchor" href="#welcome-to-github-pages"><span class="octicon octicon-link"></span></a>Welcome to GitHub Pages.</h3>
+			Basic info
+		</h3>
+		<p>
+			This is a port of <a href="https://code.google.com/p/mupen64plus/">mupen64plus</a>, the popular Nintendo 64 emulator for the web. It uses <a href="https://github.com/kripken/emscripten">emscripten</a> 
+			to compile the C/C++ code of mupen64plus to <a href="http://asmjs.org/">asm.js</a>, a subset of Javascript meant to be highly optimizable. This port is currently very immature with lots of work left to 
+			be done; for example, gamepads, save states and customizable controls are not supported; there are also many graphical glitches in games. Furthermore, it requires <a href="http://www.mozilla.org/en-US/firefox/new/">Firefox</a>, although support for Chrome 
+			should be coming soon.
+		</p>
+		<h3>
+			Controls
+		</h3>
+		<p>
+			Analog stick: Arrow keys <br/>
+			B button: F <br/>
+			A button: G <br/>
+			Z Trigger: Z <br/>
+			L/R Trigger: X,C<br/>
+			C buttons U/D/L/R: I,K,J,L<br/>
+			Start: Enter <br/>
+			DPAD U/D/L/R: W,S,A,D<br/>
+		</p>
+		<h3>
+			Play
+		</h3>
+		<p>
+			<style>
+			  .emscripten { padding-right: 0; margin-left: auto; margin-right: auto; display: block; }
+			  div.emscripten { text-align: center; }      
+			  div.emscripten_border { border: 1px solid black; }
+			  /* the canvas *must not* have any border or padding, or mouse coords will be wrong */
+			  canvas.emscripten { border: 0px none; }
 
-<p>This automatic page generator is the easiest way to create beautiful pages for all of your projects. Author your page content here using GitHub Flavored Markdown, select a template crafted by a designer, and publish. After your page is generated, you can check out the new branch:</p>
+			  #emscripten_logo {
+				display: inline-block;
+				margin: 0;
+			  }
 
-<pre><code>$ cd your_repo_root/repo_name
-$ git fetch origin
-$ git checkout gh-pages
-</code></pre>
+			  .spinner {
+				height: 30px;
+				width: 30px;
+				margin: 0;
+				margin-top: 20px;
+				margin-left: 20px;
+				display: inline-block;
+				vertical-align: top;
 
-<p>If you're using the GitHub for Mac, simply sync your repository and you'll see the new branch.</p>
+				-webkit-animation: rotation .8s linear infinite;
+				-moz-animation: rotation .8s linear infinite;
+				-o-animation: rotation .8s linear infinite;
+				animation: rotation 0.8s linear infinite;
 
-<h3>
-<a name="designer-templates" class="anchor" href="#designer-templates"><span class="octicon octicon-link"></span></a>Designer Templates</h3>
+				border-left: 5px solid rgb(235, 235, 235);
+				border-right: 5px solid rgb(235, 235, 235);
+				border-bottom: 5px solid rgb(235, 235, 235);
+				border-top: 5px solid rgb(120, 120, 120);
+				
+				border-radius: 100%;
+				background-color: rgb(189, 215, 46);
+			  }
 
-<p>We've crafted some handsome templates for you to use. Go ahead and continue to layouts to browse through them. You can easily go back to edit your page before publishing. After publishing your page, you can revisit the page generator and switch to another theme. Your Page content will be preserved if it remained markdown format.</p>
+			  @-webkit-keyframes rotation {
+				from {-webkit-transform: rotate(0deg);}
+				to {-webkit-transform: rotate(360deg);}
+			  }
+			  @-moz-keyframes rotation {
+				from {-moz-transform: rotate(0deg);}
+				to {-moz-transform: rotate(360deg);}
+			  }
+			  @-o-keyframes rotation {
+				from {-o-transform: rotate(0deg);}
+				to {-o-transform: rotate(360deg);}
+			  }
+			  @keyframes rotation {
+				from {transform: rotate(0deg);}
+				to {transform: rotate(360deg);}
+			  }
 
-<h3>
-<a name="rather-drive-stick" class="anchor" href="#rather-drive-stick"><span class="octicon octicon-link"></span></a>Rather Drive Stick?</h3>
+			  #status {
+				display: inline-block;
+				vertical-align: top;
+				margin-top: 30px;
+				margin-left: 20px;
+				font-weight: bold;
+				color: rgb(120, 120, 120);
+			  }
 
-<p>If you prefer to not use the automatic generator, push a branch named <code>gh-pages</code> to your repository to create a page manually. In addition to supporting regular HTML content, GitHub Pages support Jekyll, a simple, blog aware static site generator written by our own Tom Preston-Werner. Jekyll makes it easy to create site-wide headers and footers without having to copy them across every page. It also offers intelligent blog support and other advanced templating features.</p>
+			  #progress {
+				height: 20px;
+				width: 30px;
+			  }
 
-<h3>
-<a name="authors-and-contributors" class="anchor" href="#authors-and-contributors"><span class="octicon octicon-link"></span></a>Authors and Contributors</h3>
+			  #controls {
+				display: inline-block;
+				float: right;
+				vertical-align: top;
+				margin-top: 30px;
+				margin-right: 20px;
+			  }
 
-<p>You can <a href="https://github.com/blog/821" class="user-mention">@mention</a> a GitHub username to generate a link to their profile. The resulting <code>&lt;a&gt;</code> element will link to the contributor's GitHub Profile. For example: In 2007, Chris Wanstrath (<a href="https://github.com/defunkt" class="user-mention">@defunkt</a>), PJ Hyett (<a href="https://github.com/pjhyett" class="user-mention">@pjhyett</a>), and Tom Preston-Werner (<a href="https://github.com/mojombo" class="user-mention">@mojombo</a>) founded GitHub.</p>
+			  #output {
+				width: 100%;
+				height: 200px;
+				margin: 0 auto;
+				margin-top: 10px;
+				display: block;
+				background-color: black;
+				color: white;
+				font-family: 'Lucida Console', Monaco, monospace;
+				outline: none;
+			  }
+			</style>
+			<div class="spinner" id='spinner'></div>
+			<div class="emscripten" id="status">Downloading...</div>
+			<div id='filechooser' style="visibility:hidden;">
+				<input type="file" id="files" name="files[]" multiple />
+				<output id="list"></output>
+				<script>
+				  function handleFileSelect(evt) {
+					var files = evt.target.files; // FileList object
+					if(files.length != 1)
+						return;
+					var reader = new FileReader();
+					reader.onload = function(e) {
+						var rom = files[0].name;
+						FS.writeFile(rom, new Uint8Array(e.target.result), {encoding: 'binary'});
+						document.getElementById('filechooser').style.visibility = 'hidden';
+						Module['callMain'](['--resolution', '640x480', rom]);
+					};
+					reader.readAsArrayBuffer(files[0]);
+					
+				  }
 
-<h3>
-<a name="support-or-contact" class="anchor" href="#support-or-contact"><span class="octicon octicon-link"></span></a>Support or Contact</h3>
+				  document.getElementById('files').addEventListener('change', handleFileSelect, false);
+				</script>
+			</div>
+			<div class="emscripten">
+			  <progress value="0" max="100" id="progress" hidden=1></progress>
+			</div>
+			<div class="emscripten_border">
+			  <canvas class="emscripten" id="canvas" oncontextmenu="event.preventDefault()"></canvas>
+			</div>
+			<script type='text/javascript'>
+			  var statusElement = document.getElementById('status');
+			  var progressElement = document.getElementById('progress');
+			  var spinnerElement = document.getElementById('spinner');
 
-<p>Having trouble with Pages? Check out the documentation at <a href="http://help.github.com/pages">http://help.github.com/pages</a> or contact <a href="mailto:support@github.com">support@github.com</a> and we’ll help you sort it out.</p>
-      </section>
-    </div>
-
+			  var Module = {
+				preRun: (function() {
+					document.getElementById('filechooser').style.visibility = 'visible';
+					document.getElementById('spinner').style.display = 'none';
+					document.getElementById('status').style.display = 'none';
+				})(),
+				postRun: [],
+				noInitialRun: true,
+				print: (function() {
+				  var element = document.getElementById('output');
+				  if (element) element.value = ''; // clear browser cache
+				  return function(text) {
+					text = Array.prototype.slice.call(arguments).join(' ');
+					// These replacements are necessary if you render to raw HTML
+					//text = text.replace(/&/g, "&amp;");
+					//text = text.replace(/</g, "&lt;");
+					//text = text.replace(/>/g, "&gt;");
+					//text = text.replace('\n', '<br>', 'g');
+					console.log(text);
+					if (element) {
+					  element.value += text + "\n";
+					  element.scrollTop = element.scrollHeight; // focus on bottom
+					}
+				  };
+				})(),
+				printErr: function(text) {
+				  text = Array.prototype.slice.call(arguments).join(' ');
+				  if (0) { // XXX disabled for safety typeof dump == 'function') {
+					dump(text + '\n'); // fast, straight to the real console
+				  } else {
+					console.error(text);
+				  }
+				},
+				canvas: document.getElementById('canvas'),
+				setStatus: function(text) {
+				  if (!Module.setStatus.last) Module.setStatus.last = { time: Date.now(), text: '' };
+				  if (text === Module.setStatus.text) return;
+				  var m = text.match(/([^(]+)\((\d+(\.\d+)?)\/(\d+)\)/);
+				  var now = Date.now();
+				  if (m && now - Date.now() < 30) return; // if this is a progress update, skip it if too soon
+				  if (m) {
+					text = m[1];
+					progressElement.value = parseInt(m[2])*100;
+					progressElement.max = parseInt(m[4])*100;
+					progressElement.hidden = false;
+					spinnerElement.hidden = false;
+				  } else {
+					progressElement.value = null;
+					progressElement.max = null;
+					progressElement.hidden = true;
+					if (!text) spinnerElement.style.display = 'none';
+				  }
+				  statusElement.innerHTML = text;
+				},
+				totalDependencies: 0,
+				monitorRunDependencies: function(left) {
+				  this.totalDependencies = Math.max(this.totalDependencies, left);
+				  Module.setStatus(left ? 'Preparing... (' + (this.totalDependencies-left) + '/' + this.totalDependencies + ')' : 'All downloads complete.');
+				}
+			  };
+			  Module.setStatus('Downloading...');
+			</script>
+			<script async type="text/javascript" src="mupen64plus-ui-console.js"></script>
+		</p>
     <!-- FOOTER  -->
     <div id="footer_wrap" class="outer">
       <footer class="inner">
