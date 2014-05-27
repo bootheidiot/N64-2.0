@@ -196,7 +196,7 @@ static void compare_core_check(unsigned int cur_opcode)
 /* global functions */
 void compare_core_init(int mode)
 {
-#if defined(WIN32)
+#if defined(WIN32) || defined(EMSCRIPTEN)
     DebugMessage(M64MSG_VERBOSE, "core comparison feature not supported on Windows platform.");
     return;
 #else

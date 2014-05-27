@@ -1,0 +1,1 @@
+Module['arguments'] = ['--resolution', '800x600', 'sm64.z64'];

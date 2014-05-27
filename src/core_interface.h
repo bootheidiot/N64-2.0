@@ -22,6 +22,10 @@
 #if !defined(CORE_INTERFACE_H)
 #define CORE_INTERFACE_H
 
+#ifdef M64P_STATIC_PLUGINS
+#include "core_interface_static.h"
+#else
+
 #include "m64p_types.h"
 #include "m64p_common.h"
 #include "m64p_frontend.h"
@@ -102,3 +106,4 @@ extern ptr_DebugBreakpointCommand DebugBreakpointCommand;
 
 #endif /* #define CORE_INTERFACE_H */
 
+#endif /* UI_CONSOLE_STATIC */

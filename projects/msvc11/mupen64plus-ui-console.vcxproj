@@ -1,9 +1,17 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Debug|Emscripten">
+      <Configuration>Debug</Configuration>
+      <Platform>Emscripten</Platform>
+    </ProjectConfiguration>
     <ProjectConfiguration Include="Debug|Win32">
       <Configuration>Debug</Configuration>
       <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Release|Emscripten">
+      <Configuration>Release</Configuration>
+      <Platform>Emscripten</Platform>
     </ProjectConfiguration>
     <ProjectConfiguration Include="Release|Win32">
       <Configuration>Release</Configuration>
@@ -20,12 +28,12 @@
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
     <WholeProgramOptimization>true</WholeProgramOptimization>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
     <ConfigurationType>Application</ConfigurationType>
     <CharacterSet>MultiByte</CharacterSet>
-    <PlatformToolset>v110</PlatformToolset>
+    <PlatformToolset>v100</PlatformToolset>
   </PropertyGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
   <ImportGroup Label="ExtensionSettings">
@@ -51,11 +59,13 @@
     <CodeAnalysisRuleSet Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">AllRules.ruleset</CodeAnalysisRuleSet>
     <CodeAnalysisRules Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
     <CodeAnalysisRuleAssemblies Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" />
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">.html</TargetExt>
+    <TargetExt Condition="'$(Configuration)|$(Platform)'=='Release|Emscripten'">.html</TargetExt>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <Optimization>Disabled</Optimization>
-      <AdditionalIncludeDirectories>..\..\..\mupen64plus-core\src\api;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\mupen64plus-core\src\api;..\..\..\mupen64plus-win32-deps\SDL-1.2.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <MinimalRebuild>true</MinimalRebuild>
       <BasicRuntimeChecks>EnableFastChecks</BasicRuntimeChecks>
@@ -67,7 +77,7 @@
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>..\..\..\mupen64plus-win32-deps\SDL-1.2.14\lib\SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\..\mupen64plus-win32-deps\SDL-1.2.14\lib\SDLmain.lib;..\..\..\mupen64plus-win32-deps\SDL-1.2.14\lib\SDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <TargetMachine>MachineX86</TargetMachine>
@@ -87,7 +97,7 @@ copy ..\..\..\mupen64plus-win32-deps\zlib-1.2.3\bin\*.dll "$(OutDir)"
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <ClCompile>
-      <AdditionalIncludeDirectories>..\..\..\mupen64plus-core\src\api;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\..\..\mupen64plus-core\src\api;..\..\..\mupen64plus-win32-deps\SDL-1.2.14\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;_CRT_SECURE_NO_DEPRECATE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
       <PrecompiledHeader>
@@ -97,7 +107,7 @@ copy ..\..\..\mupen64plus-win32-deps\zlib-1.2.3\bin\*.dll "$(OutDir)"
       <CompileAs>CompileAsCpp</CompileAs>
     </ClCompile>
     <Link>
-      <AdditionalDependencies>..\..\..\mupen64plus-win32-deps\SDL-1.2.14\lib\SDLmain.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>..\..\..\mupen64plus-win32-deps\SDL-1.2.14\lib\SDLmain.lib;..\..\..\mupen64plus-win32-deps\SDL-1.2.14\lib\SDL.lib;%(AdditionalDependencies)</AdditionalDependencies>
       <GenerateDebugInformation>true</GenerateDebugInformation>
       <SubSystem>Console</SubSystem>
       <OptimizeReferences>true</OptimizeReferences>
@@ -117,19 +127,97 @@ copy ..\..\..\mupen64plus-win32-deps\zlib-1.2.3\bin\*.dll "$(OutDir)"
 </Command>
     </PostBuildEvent>
   </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\mupen64plus-core\src\api;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-s FULL_ES2=1 -s LEGACY_GL_EMULATION=1 %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>M64P_STATIC_PLUGINS</PreprocessorDefinitions>
+      <GenerateDebugInformation>FullDebugInfo</GenerateDebugInformation>
+    </ClCompile>
+    <Link>
+      <AdditionalDependencies>$(SolutionDir)$(Platform)\$(Configuration)\mupen64plus.bc;..\..\..\mupen64plus-emscripten-deps\zlib-1.2.8\lib\zlib.bc;..\..\..\mupen64plus-emscripten-deps\freetype-2.5.3\lib\freetype253.bc;..\..\..\mupen64plus-emscripten-deps\libpng-1.6.10\lib\libpng.bc;$(SolutionDir)$(Platform)\$(Configuration)\mupen64plus-rsp-hle.bc;$(SolutionDir)$(Platform)\$(Configuration)\mupen64plus-gles2n64.bc;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalOptions>-s FULL_ES2=1 -s TOTAL_MEMORY=268435456 %(AdditionalOptions)</AdditionalOptions>
+      <PostJsFile>
+      </PostJsFile>
+      <EmbedFile>
+      </EmbedFile>
+      <PreJsFile>debug.js</PreJsFile>
+      <PreloadFile>sm64.z64</PreloadFile>
+    </Link>
+    <PreBuildEvent>
+      <Command>copy ..\..\..\mupen64plus-input-sdl\data\InputAutoCfg.ini InputAutoCfg.ini</Command>
+    </PreBuildEvent>
+    <PreBuildEvent>
+      <Message>Copying InputAutoCfg.ini to project root</Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>delete InputAutoCfg.ini</Command>
+    </PostBuildEvent>
+    <PostBuildEvent>
+      <Message>Deleting InputAutoCfg.ini from project root</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
+  <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Emscripten'">
+    <ClCompile>
+      <AdditionalIncludeDirectories>..\..\..\mupen64plus-core\src\api;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalOptions>-s FULL_ES2=1 -s TOTAL_MEMORY=268435456 %(AdditionalOptions)</AdditionalOptions>
+      <PreprocessorDefinitions>M64P_STATIC_PLUGINS</PreprocessorDefinitions>
+    </ClCompile>
+    <Link>
+      <AdditionalOptions>-s FULL_ES2=1 -s TOTAL_MEMORY=268435456 %(AdditionalOptions)</AdditionalOptions>
+      <AdditionalDependencies>$(SolutionDir)$(Platform)\$(Configuration)\mupen64plus.bc;..\..\..\mupen64plus-emscripten-deps\zlib-1.2.8\lib\zlib.bc;..\..\..\mupen64plus-emscripten-deps\freetype-2.5.3\lib\freetype253.bc;..\..\..\mupen64plus-emscripten-deps\libpng-1.6.10\lib\libpng.bc;$(SolutionDir)$(Platform)\$(Configuration)\mupen64plus-rsp-hle.bc;$(SolutionDir)$(Platform)\$(Configuration)\mupen64plus-gles2n64.bc;$(SolutionDir)$(Platform)\$(Configuration)\mupen64plus-audio-sdl.bc;$(SolutionDir)$(Platform)\$(Configuration)\mupen64plus-input-sdl.bc;%(AdditionalDependencies)</AdditionalDependencies>
+      <PostJsFile>
+      </PostJsFile>
+      <PreJsFile>debug.js</PreJsFile>
+      <PreloadFile>mupen64plus.ini;InputAutoCfg.ini;gles2n64rom.conf;sm64.z64</PreloadFile>
+    </Link>
+    <PreBuildEvent>
+      <Command>copy ..\..\..\mupen64plus-input-sdl\data\InputAutoCfg.ini InputAutoCfg.ini
+copy ..\..\..\mupen64plus-core\data\mupen64plus.ini mupen64plus.ini
+copy ..\..\..\mupen64plus-gles2n64\gles2n64rom.conf gles2n64rom.conf</Command>
+      <Message>Copying data files to project root for embedding</Message>
+    </PreBuildEvent>
+    <PostBuildEvent>
+      <Command>del InputAutoCfg.ini
+del mupen64plus.ini
+del gles2n64rom.conf</Command>
+      <Message>Deleting data files from project root</Message>
+    </PostBuildEvent>
+  </ItemDefinitionGroup>
   <ItemGroup>
     <ClCompile Include="..\..\src\cheat.c" />
     <ClCompile Include="..\..\src\compare_core.c" />
-    <ClCompile Include="..\..\src\core_interface.c" />
+    <ClCompile Include="..\..\src\core_interface.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Emscripten'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\core_interface_static.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
     <ClCompile Include="..\..\src\main.c" />
-    <ClCompile Include="..\..\src\osal_dynamiclib_win32.c" />
-    <ClCompile Include="..\..\src\osal_files_win32.c" />
-    <ClCompile Include="..\..\src\plugin.c" />
+    <ClCompile Include="..\..\src\osal_dynamiclib_win32.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Emscripten'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\osal_files_win32.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Emscripten'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\plugin.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Emscripten'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Emscripten'">true</ExcludedFromBuild>
+    </ClCompile>
+    <ClCompile Include="..\..\src\plugin_static.c">
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">true</ExcludedFromBuild>
+      <ExcludedFromBuild Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">true</ExcludedFromBuild>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="..\..\src\cheat.h" />
     <ClInclude Include="..\..\src\compare_core.h" />
     <ClInclude Include="..\..\src\core_interface.h" />
+    <ClInclude Include="..\..\src\core_interface_static.h" />
     <ClInclude Include="..\..\src\main.h" />
     <ClInclude Include="..\..\src\osal_dynamiclib.h" />
     <ClInclude Include="..\..\src\osal_files.h" />

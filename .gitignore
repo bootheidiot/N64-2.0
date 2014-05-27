@@ -1,2 +1,11 @@
 /projects/unix/_obj*/
 /projects/unix/mupen64plus-ui-console*.so
+/projects/msvc11/Debug
+/projects/msvc11/Emscripten
+/projects/msvc11/Release
+/projects/msvc11/ipch
+/projects/msvc11/*.opensdf
+/projects/msvc11/*.sdf
+/projects/msvc11/*.suo
+/projects/msvc11/*.user
+/projects/msvc11/*.z64
